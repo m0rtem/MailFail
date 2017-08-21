@@ -1,4 +1,4 @@
-# [MailFail](#) 
+# [MailFail](https://sploit.io/2017/08/21/mailfail-a-story-of-scary-newsletters-and-evil-signup-forms/) 
 #### Utilize misconfigured newsletter forms to spam / deny service to an inbox
 This is a very minimal PoC which uses public data and simple Python3 programming to show how serious / easy to perform email signup automation abuse can be.
 
