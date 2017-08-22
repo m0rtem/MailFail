@@ -25,7 +25,7 @@ logo = """\
  | |\/| |/ _` | | | |_ / _` | | |
  | |  | | (_| | | |  _| (_| | | |
  |_|  |_|\__,_|_|_|_|  \__,_|_|_|
-  v1.0                 by m0rtem
+  v1.1                 by m0rtem
 """
 
 disclamer = """\
@@ -78,6 +78,8 @@ if args.tor is True:
 # Import urllib after socks setup
 import urllib.request
 import urllib.parse
+from urllib.error import HTTPError
+from urllib.error import URLError
 
 def print_out(data):
     datetimestr = str(datetime.datetime.strftime(datetime.datetime.now(), '%H:%M:%S'))
@@ -85,9 +87,18 @@ def print_out(data):
 
 def tor_test():
 	# Get Tor IP from wtfismyip
-	with urllib.request.urlopen('https://wtfismyip.com/text') as response:
-		html = response.read()
-		print_out(Style.BRIGHT + Fore.GREEN + "Your Tor IP is: " + html.decode('utf-8'))
+	try:
+		with urllib.request.urlopen('https://wtfismyip.com/text') as response:
+			html = response.read()
+			print_out(Style.BRIGHT + Fore.GREEN + "Your Tor IP is: " + html.decode('utf-8'))
+	except HTTPError as e:
+		# do something
+		print_out(Style.BRIGHT + Fore.RED + "Error code: " + str(e.code))
+		exit(1)
+	except URLError as e:
+		# do something
+		print_out(Style.BRIGHT + Fore.RED + "Reason: " + str(e.reason))
+		exit(1)
 
 def load_url(url, timeout):
 	# Build URL query to email signup page
@@ -121,11 +132,11 @@ def main(lines):
 if __name__ == "__main__":
 
 	print(Fore.RED + Style.BRIGHT + logo + Fore.RESET)
-	print(Fore.WHITE + Style.BRIGHT + disclamer + Fore.RESET)
+	print(Fore.WHITE + Style.DIM + disclamer + Fore.RESET)
 
 	if args.target is not None:
 		targetEmail = args.target
-		print_out(Style.BRIGHT + Fore.GREEN + "Target email: " + targetEmail)
+		print_out(Style.BRIGHT + Fore.YELLOW + "Target email: " + targetEmail)
 	else:
 		print_out(Style.BRIGHT + Fore.RED + "Please supply target email...")
 		parser.print_help()
@@ -134,8 +145,7 @@ if __name__ == "__main__":
 	tor_test()
 	
 	try:
-		while True:
-			main(lines)
+		main(lines)
 	except KeyboardInterrupt:
 		print_out(Style.BRIGHT + Fore.RED + "Shutting down...")
 		exit(1)
